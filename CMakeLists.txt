@@ -16,9 +16,9 @@ project(ncnn)
 
 cmake_minimum_required(VERSION 2.8.10)
 
-# set(CMAKE_BUILD_TYPE debug)
+ set(CMAKE_BUILD_TYPE debug)
 # set(CMAKE_BUILD_TYPE relwithdebinfo)
-set(CMAKE_BUILD_TYPE release)
+#set(CMAKE_BUILD_TYPE release)
 
 option(NCNN_OPENMP "openmp support" ON)
 option(NCNN_STDIO "load model from external file" ON)
