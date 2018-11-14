@@ -57,3 +57,4 @@ endif()
 
 add_subdirectory(mtcnn)
 add_subdirectory(src)
+#add_subdirectory(mtcnn_android)

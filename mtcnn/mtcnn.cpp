@@ -178,6 +178,8 @@ void mtcnn::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
     orderScore order;
     int count = 0;
 
+    cout<<"scales num ="<<scales_.size()<<endl;
+
     for (size_t i = 0; i < scales_.size(); i++) {
         int hs = (int)ceil(img_h*scales_[i]);
         int ws = (int)ceil(img_w*scales_[i]);
@@ -199,10 +201,8 @@ void mtcnn::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
         ex.extract("pnet/prob1", score_);
         ex.extract("pnet/conv4-2/BiasAdd", location_);
 #endif
-//        cv::Mat regsMat = cv::Mat(location_.w,
-//                                  location_.h,
-//                                  CV_MAKETYPE(CV_32F, 4),
-//                                  location_.data);
+
+
 //        cv::Mat regsMat(location_.h,location_.w,CV_32FC4);
 //        location_.to_pixels(regsMat.data,ncnn::Mat::PIXEL_RGBA);
 //        cout<<" this is test line 254"<<endl;
@@ -238,6 +238,9 @@ void mtcnn::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
         if((*it).exist){
             ncnn::Mat tempIm;
             copy_cut_border(img, tempIm, (*it).y1, img_h-(*it).y2, (*it).x1, img_w-(*it).x2);
+//            cv::Mat cv_out_img(tempIm.h,tempIm.w,CV_8UC3);
+//            tempIm.to_pixels(cv_out_img.data,ncnn::Mat::PIXEL_RGB2BGR);
+//            cout<<cv_out_img<<endl;
             ncnn::Mat in;
             resize_bilinear(tempIm, in, 24, 24);
             ncnn::Extractor ex = Rnet.create_extractor();
@@ -337,37 +340,4 @@ void mtcnn::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
 #if boxnum == 3
     finalBbox_ = thirdBbox_;
 #endif
-}
-
-int main(int argc, char** argv)
-{
-    const char* imagepath = argv[1];
-
-    cv::Mat cv_img = cv::imread(imagepath, CV_LOAD_IMAGE_COLOR);
-    if (cv_img.empty())
-    {
-        fprintf(stderr, "cv::imread %s failed\n", imagepath);
-        return -1;
-    }
-    std::vector<Bbox> finalBbox;
-    mtcnn mm;
-    ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(cv_img.data, ncnn::Mat::PIXEL_RGB2BGR, cv_img.cols, cv_img.rows);
-
-//    cv::Mat reget_img(ncnn_img.h,ncnn_img.w,CV_8UC3);
-//    ncnn_img.to_pixels(reget_img.data,ncnn::Mat::PIXEL_RGB2BGR);
-
-    struct timeval  tv1,tv2;
-    struct timezone tz1,tz2;
-    gettimeofday(&tv1,&tz1);
-    mm.detect(ncnn_img, finalBbox);
-    gettimeofday(&tv2,&tz2);
-    printf( "%s = %g ms \n ", "Detection All time", getElapse(&tv1, &tv2) );
-    for(vector<Bbox>::iterator it=finalBbox.begin(); it!=finalBbox.end();it++){
-        if((*it).exist){
-            rectangle(cv_img, Point((*it).x1, (*it).y1), Point((*it).x2, (*it).y2), Scalar(0,0,255), 2,8,0);
-            for(int num=0;num<5;num++)circle(cv_img,Point((int)*(it->ppoint+num), (int)*(it->ppoint+num+5)),3,Scalar(0,255,255), -1);
-        }
-    }
-    imwrite("/home/liuhui/Desktop/result.jpg",cv_img);
-    return 0;
 }

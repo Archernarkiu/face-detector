@@ -1,3 +1,6 @@
+#ifndef MTCNN_H
+#define MTCNN_H
+
 #include <stdio.h>
 #include <algorithm>
 #include <vector>
@@ -7,11 +10,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
-
 #include "net.h"
 
-#ifndef MTCNN_H
-#define MTCNN_H
 using namespace std;
 using namespace cv;
 struct Bbox
@@ -32,7 +32,7 @@ struct orderScore
     float score;
     int oriOrder;
 };
-bool cmpScore(orderScore lsh, orderScore rsh){
+static bool cmpScore(orderScore lsh, orderScore rsh){
     if(lsh.score<rsh.score)
         return true;
     else
